@@ -13,7 +13,7 @@ face_detection_model = cv2.dnn.readNetFromCaffe('./models/deploy.prototxt.txt','
 model = tf.keras.models.load_model('face_cnn_model/')
 
 # label 
-labels = ['Mask', 'No Mask', 'Covered Mouth Chin', 'Covered Nose Mouth']
+labels = ['Mask', 'No Mask!', 'Partially OK', 'Partially OK']
 
 #now we should choose a color for each label
 #mask=green 0,255,0
@@ -23,21 +23,17 @@ labels = ['Mask', 'No Mask', 'Covered Mouth Chin', 'Covered Nose Mouth']
 
 def getColor(label):
     if label == "Mask":
-        color = (0,255,0)
+        color = (11, 189, 50)
 
     elif label == 'No Mask':
-        color = (255,0,0)
-    elif label == 'Covered Mouth Chin':
-        color = (0,0,255)
+        color = (186, 22, 22)
+    elif label == 'Partially OK':
+        color = (35, 65, 219)
     else:
-        color = (255,0,255)
+        color = (35, 65, 219)
 
     return color
 
-#getColor('Mask') #show the color we choose for mask
-#getColor('No Mask') #show the color we choose for no mask
-#getColor('Covered Mouth Chin') #show the color we choose for covered mouth chin
-#getColor('Covered Nose Mouth') #show the color we choose for covered nose mouth
 
 #recognition part code
 
@@ -59,7 +55,7 @@ def face_mask_prediction(img):
             pt2 = (box[2], box[3])
             #cv2.rectangle(image,pt1,pt2,(0,255,0),1) #the rectangle box around the face
 
-            #step 2: data prepeocessing
+            #step 2: data preprocessing
             #need to crop the face
 
             face = image[box[1]:box[3],box[0]:box[2]]
@@ -80,7 +76,7 @@ def face_mask_prediction(img):
             result = model.predict(img_input)
             #print(result) #the probabilities of the labels
             result = softmax(result)[0]
-            confidence_index = result.argmax() #take out the labels out of this and exctract only where we have the highest value and that means that it wears a mask
+            confidence_index = result.argmax() #take out the labels out of this and extract only where we have the highest value and that means that it wears a mask
             print('The confidence score is =',confidence_index)
             confidence_score = result[confidence_index]
             label = labels[confidence_index] #label out
